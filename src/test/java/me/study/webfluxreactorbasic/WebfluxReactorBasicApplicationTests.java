@@ -122,6 +122,31 @@ class WebfluxReactorBasicApplicationTests {
                 .verifyComplete();
     }
 
+    // Reactive Type 조합하기
+    @Test
+    public void mergeFluxes() throws Exception {
+        // given
+        Flux<String> characterFlux = Flux
+                .just("Garfield", "Kojak", "Barbossa")
+                .delayElements(Duration.ofMillis(500));
+
+        Flux<String> foodFlux = Flux
+            .just("Lasagna", "Lollipops", "Apples")
+            .delaySubscription(Duration.ofMillis(250))
+            .delayElements(Duration.ofMillis(500));
+
+        Flux<String> mergedFlux = characterFlux.mergeWith(foodFlux);
+
+        StepVerifier.create(mergedFlux)
+            .expectNext("Garfield")
+            .expectNext("Lasagna")
+            .expectNext("Kojak")
+            .expectNext("Lollipops")
+            .expectNext("Barbossa")
+            .expectNext("Apples")
+            .verifyComplete();
+    }
+
     @Test
     public void flatMap() throws Exception {
         Flux<Player> playerFlux = Flux
