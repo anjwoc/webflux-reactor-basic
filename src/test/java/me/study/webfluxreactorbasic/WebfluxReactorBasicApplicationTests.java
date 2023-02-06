@@ -7,8 +7,10 @@ import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 import reactor.test.StepVerifier;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Stream;
 
 @SpringBootTest
 class WebfluxReactorBasicApplicationTests {
@@ -43,6 +45,47 @@ class WebfluxReactorBasicApplicationTests {
 
         // then
         StepVerifier.create(fruitFlux)
+                .expectNext("Apple")
+                .expectNext("Orange")
+                .expectNext("Grape")
+                .expectNext("Banana")
+                .expectNext("Strawberry")
+                .verifyComplete();
+    }
+
+    @Test
+    public void createAFlux_fromIterable() throws Exception {
+        // given
+        ArrayList<String> fruitList = new ArrayList<>();
+        fruitList.add("Apple");
+        fruitList.add("Orange");
+        fruitList.add("Grape");
+        fruitList.add("Banana");
+        fruitList.add("Strawberry");
+
+        // when
+        Flux<String> fruitFlux = Flux.fromIterable(fruitList);
+
+        // then
+        StepVerifier.create(fruitFlux)
+                .expectNext("Apple")
+                .expectNext("Orange")
+                .expectNext("Grape")
+                .expectNext("Banana")
+                .expectNext("Strawberry")
+                .verifyComplete();
+    }
+
+    @Test
+    public void createAFlux_fromStream() throws Exception {
+        // given
+        Stream<String> streams = Stream.of("Apple", "Orange", "Grape", "Banana", "Strawberry");
+
+        // when
+        Flux<String> stringFlux = Flux.fromStream(streams);
+
+        // then
+        StepVerifier.create(stringFlux)
                 .expectNext("Apple")
                 .expectNext("Orange")
                 .expectNext("Grape")
