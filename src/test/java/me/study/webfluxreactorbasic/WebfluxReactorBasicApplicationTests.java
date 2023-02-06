@@ -95,6 +95,19 @@ class WebfluxReactorBasicApplicationTests {
     }
 
     @Test
+    public void createAFlux_range() throws Exception {
+        Flux<Integer> range = Flux.range(1, 5);
+
+        StepVerifier.create(range)
+                .expectNext(1)
+                .expectNext(2)
+                .expectNext(3)
+                .expectNext(4)
+                .expectNext(5)
+                .verifyComplete();
+    }
+
+    @Test
     public void flatMap() throws Exception {
         Flux<Player> playerFlux = Flux
                 .just("Micheal Jordan", "Scottie Pippen", "Steve kerr")
