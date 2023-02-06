@@ -7,6 +7,7 @@ import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 import reactor.test.StepVerifier;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -104,6 +105,20 @@ class WebfluxReactorBasicApplicationTests {
                 .expectNext(3)
                 .expectNext(4)
                 .expectNext(5)
+                .verifyComplete();
+    }
+
+    @Test
+    public void createAFlux_interval() throws Exception {
+        Flux<Long> intervalFlux = Flux.interval(Duration.ofSeconds(1))
+                .take(5);
+
+        StepVerifier.create(intervalFlux)
+                .expectNext(0L)
+                .expectNext(1L)
+                .expectNext(2L)
+                .expectNext(3L)
+                .expectNext(4L)
                 .verifyComplete();
     }
 
