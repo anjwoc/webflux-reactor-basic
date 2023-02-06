@@ -6,6 +6,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 import reactor.test.StepVerifier;
+import reactor.util.function.Tuple2;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -125,7 +126,6 @@ class WebfluxReactorBasicApplicationTests {
     // Reactive Type 조합하기
     @Test
     public void mergeFluxes() throws Exception {
-        // given
         Flux<String> characterFlux = Flux
                 .just("Garfield", "Kojak", "Barbossa")
                 .delayElements(Duration.ofMillis(500));
@@ -144,6 +144,23 @@ class WebfluxReactorBasicApplicationTests {
             .expectNext("Lollipops")
             .expectNext("Barbossa")
             .expectNext("Apples")
+            .verifyComplete();
+    }
+
+    @Test
+    public void zipFluxes() throws Exception {
+        Flux<String> characterFlux = Flux.just("Garfield", "Kojak", "Barbossa");
+        Flux<String> foodFlux = Flux.just("Lasagna", "Lollipops", "Apples");
+
+        Flux<Tuple2<String, String>> zippedFlux = Flux.zip(characterFlux, foodFlux);
+
+        StepVerifier.create(zippedFlux)
+            .expectNextMatches(p ->
+                p.getT1().equals("Garfield") && p.getT2().equals("Lasagna"))
+            .expectNextMatches(p ->
+                p.getT1().equals("Kojak") && p.getT2().equals("Lollipops"))
+            .expectNextMatches(p ->
+                p.getT1().equals("Barbossa") && p.getT2().equals("Apples"))
             .verifyComplete();
     }
 
